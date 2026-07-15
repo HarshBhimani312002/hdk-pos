@@ -1,11 +1,18 @@
-const NotFound = () => {
+function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-5xl font-bold">
-        404 Page Not Found
-      </h1>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        fontSize: "32px",
+        fontWeight: "bold",
+      }}
+    >
+      404 - Page Not Found
     </div>
   );
-};
+}
 
 export default NotFound;
