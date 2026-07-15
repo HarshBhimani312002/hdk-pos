@@ -1,3 +1,6 @@
+import Sidebar from "../../components/layout/Sidebar";
+import Navbar from "../../components/layout/Navbar";
+import DashboardCard from "../../components/layout/DashboardCard";
 import { supabase } from "../../services/supabase";
 
 const Dashboard = () => {
@@ -10,17 +13,45 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">
-        Dashboard
-      </h1>
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <Sidebar />
 
-      <button
-        onClick={handleLogout}
-        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-      >
-        Logout
-      </button>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        <Navbar />
+
+        <div className="p-6">
+          <div className="grid grid-cols-4 gap-6">
+            <DashboardCard
+              title="Today's Sales"
+              value="₹15,250"
+            />
+
+            <DashboardCard
+              title="Orders"
+              value="56"
+            />
+
+            <DashboardCard
+              title="Products"
+              value="120"
+            />
+
+            <DashboardCard
+              title="Customers"
+              value="89"
+            />
+          </div>
+
+          <button
+            onClick={handleLogout}
+            className="mt-8 bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
