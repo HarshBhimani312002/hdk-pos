@@ -1,15 +1,12 @@
-import { useEffect } from "react";
-import { supabase } from "./services/supabase";
 import AppRoutes from "./routes/AppRoutes";
+import { AuthProvider } from "./auth/AuthProvider";
 
 function App() {
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      console.log("Current Session:", data.session);
-    });
-  }, []);
-
-  return <AppRoutes />;
+  return (
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
+  );
 }
 
 export default App;
