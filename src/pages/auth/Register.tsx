@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Store, User, Shield } from "lucide-react";
+import { Store, User } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { supabase } from "../../services/supabase";
