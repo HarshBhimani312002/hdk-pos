@@ -1,19 +1,14 @@
 import type { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "./AuthProvider";
 
 type ProtectedRouteProps = {
   children: ReactNode;
 };
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { session, loading } = useAuth();
+  const user = localStorage.getItem("currentUser");
 
-  if (loading) {
-    return <h1>Loading...</h1>;
-  }
-
-  if (!session) {
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 

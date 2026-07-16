@@ -1,15 +1,23 @@
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
+import { useUser } from "../../context/UserContext";
+
 import Sidebar from "../../components/layout/Sidebar";
 import Navbar from "../../components/layout/Navbar";
 import DashboardCard from "../../components/layout/DashboardCard";
-import { supabase } from "../../services/supabase";
 
 const Dashboard = () => {
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const navigate = useNavigate();
 
-    alert("Logged Out!");
+  const { user } = useUser();
 
-    window.location.href = "/login";
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+
+    toast.success("Logged Out Successfully");
+
+    navigate("/login");
   };
 
   return (
@@ -22,6 +30,20 @@ const Dashboard = () => {
         <Navbar />
 
         <div className="p-6">
+          <div className="mb-6 rounded-xl bg-white p-5 shadow">
+            <h2 className="text-2xl font-bold">
+              Welcome, {user?.username} 👋
+            </h2>
+
+            <p className="mt-2 text-gray-600">
+              Store : {user?.store_name}
+            </p>
+
+            <p className="text-gray-600">
+              Role : {user?.role}
+            </p>
+          </div>
+
           <div className="grid grid-cols-4 gap-6">
             <DashboardCard
               title="Today's Sales"
@@ -46,7 +68,7 @@ const Dashboard = () => {
 
           <button
             onClick={handleLogout}
-            className="mt-8 bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700"
+            className="mt-8 rounded-lg bg-red-600 px-5 py-2 text-white hover:bg-red-700"
           >
             Logout
           </button>

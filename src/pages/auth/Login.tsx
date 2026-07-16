@@ -1,43 +1,49 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail } from "lucide-react";
+import { User } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { supabase } from "../../services/supabase";
+import { useUser } from "../../context/UserContext";
 
 import AuthLayout from "../../components/auth/AuthLayout";
 import BrandPanel from "../../components/auth/BrandPanel";
 import AuthInput from "../../components/auth/AuthInput";
 import PasswordInput from "../../components/auth/PasswordInput";
 import GradientButton from "../../components/auth/GradientButton";
+
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        navigate("/");
-      }
-    });
-  }, [navigate]);
+  const { setUser } = useUser();
 
   const handleLogin = async () => {
+    if (!username || !password) {
+      toast.error("Please enter username and password");
+      return;
+    }
+
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("username", username)
+      .eq("password", password)
+      .eq("role", "owner")
+      .maybeSingle();
 
-    if (error) {
-      toast.error(error.message);
+    if (error || !user) {
+      toast.error("Invalid Username or Password");
       setLoading(false);
       return;
     }
+
+    localStorage.setItem("currentUser", JSON.stringify(user));
+    setUser(user);
 
     toast.success("Login Successful!");
 
@@ -59,11 +65,11 @@ const Login = () => {
 
           <div className="mt-8 space-y-5">
             <AuthInput
-              icon={<Mail size={18} />}
-              type="email"
-              placeholder="Work email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              icon={<User size={18} />}
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
 
             <PasswordInput
@@ -87,6 +93,7 @@ const Login = () => {
               text={loading ? "Signing In..." : "Sign In"}
               onClick={handleLogin}
             />
+
             <p className="text-center text-sm text-gray-600">
               Don't have an account?{" "}
               <Link

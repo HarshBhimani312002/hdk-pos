@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, User } from "lucide-react";
+import { Store, User, Shield } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { supabase } from "../../services/supabase";
@@ -12,37 +12,41 @@ import PasswordInput from "../../components/auth/PasswordInput";
 import GradientButton from "../../components/auth/GradientButton";
 
 const Register = () => {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [storeName, setStoreName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        navigate("/");
-      }
-    });
-  }, [navigate]);
-
   const handleRegister = async () => {
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+    if (!storeName || !username || !password) {
+      toast.error("Please fill all fields");
       return;
     }
 
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    // Check if username already exists
+    const { data: existingUser } = await supabase
+      .from("users")
+      .select("*")
+      .eq("username", username)
+      .maybeSingle();
 
-    console.log(data);
-    console.log(error);
+    if (existingUser) {
+      toast.error("Username already exists");
+      setLoading(false);
+      return;
+    }
+
+    // Create Owner
+    const { error } = await supabase.from("users").insert({
+      store_name: storeName,
+      username,
+      password,
+      role: "owner",
+    });
 
     if (error) {
       toast.error(error.message);
@@ -50,9 +54,7 @@ const Register = () => {
       return;
     }
 
-    toast.success("Registration Successful!");
-
-    await supabase.auth.signOut();
+    toast.success("Account Created Successfully");
 
     setLoading(false);
 
@@ -70,19 +72,19 @@ const Register = () => {
 
           <div className="mt-8 space-y-5">
             <AuthInput
-              icon={<User size={18} />}
+              icon={<Store size={18} />}
               type="text"
-              placeholder="Full Name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Store Name"
+              value={storeName}
+              onChange={(e) => setStoreName(e.target.value)}
             />
 
             <AuthInput
-              icon={<Mail size={18} />}
-              type="email"
-              placeholder="Work email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              icon={<User size={18} />}
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
 
             <PasswordInput
@@ -90,13 +92,6 @@ const Register = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-
-            <PasswordInput
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-
             <GradientButton
               text={loading ? "Creating Account..." : "Create Account"}
               onClick={handleRegister}
