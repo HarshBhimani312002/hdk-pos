@@ -50,7 +50,7 @@ const Login = () => {
 
     setLoading(false);
 
-    navigate("/");
+    navigate("/dashboard");
   };
 
   return (

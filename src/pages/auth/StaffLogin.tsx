@@ -50,7 +50,7 @@ const StaffLogin = () => {
 
     setLoading(false);
 
-    navigate("/staff-dashboard");
+    navigate("/dashboard")
   };
 
   return (

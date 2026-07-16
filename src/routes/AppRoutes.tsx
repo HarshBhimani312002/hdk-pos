@@ -1,11 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import ProtectedRoute from "../auth/ProtectedRoute";
-import OwnerRoute from "../auth/OwnerRoute";
-import StaffRoute from "../auth/StaffRoute";
 
 import Dashboard from "../pages/dashboard/Dashboard";
-import StaffDashboard from "../pages/dashboard/StaffDashboard";
 import StaffManagement from "../pages/dashboard/StaffManagement";
 import Billing from "../pages/billing/Billing";
 
@@ -19,17 +16,17 @@ function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Owner Dashboard */}
+        {/* Dashboard (Owner + Staff) */}
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <ProtectedRoute>
-              <OwnerRoute>
-                <Dashboard />
-              </OwnerRoute>
+              <Dashboard />
             </ProtectedRoute>
           }
         />
+
+        {/* Billing */}
         <Route
           path="/billing"
           element={
@@ -39,26 +36,12 @@ function AppRoutes() {
           }
         />
 
-        {/* Staff Dashboard */}
-        <Route
-          path="/staff-dashboard"
-          element={
-            <ProtectedRoute>
-              <StaffRoute>
-                <StaffDashboard />
-              </StaffRoute>
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Staff Management (Owner Only) */}
+        {/* Staff Management (Owner Only - check inside component if needed) */}
         <Route
           path="/staff-management"
           element={
             <ProtectedRoute>
-              <OwnerRoute>
-                <StaffManagement />
-              </OwnerRoute>
+              <StaffManagement />
             </ProtectedRoute>
           }
         />
@@ -71,6 +54,12 @@ function AppRoutes() {
 
         {/* Owner Register */}
         <Route path="/register" element={<Register />} />
+
+        {/* Redirect root to dashboard */}
+        <Route
+          path="/"
+          element={<ProtectedRoute><Dashboard /></ProtectedRoute>}
+        />
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />

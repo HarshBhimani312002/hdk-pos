@@ -14,7 +14,7 @@ const OwnerRoute = ({ children }: OwnerRouteProps) => {
   }
 
   if (user.role !== "owner") {
-    return <Navigate to="/staff-dashboard" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;
