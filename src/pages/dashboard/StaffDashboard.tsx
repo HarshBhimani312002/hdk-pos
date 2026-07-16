@@ -7,25 +7,25 @@ import Sidebar from "../../components/layout/Sidebar";
 import Navbar from "../../components/layout/Navbar";
 import DashboardCard from "../../components/layout/DashboardCard";
 
-const Dashboard = () => {
+const StaffDashboard = () => {
   const navigate = useNavigate();
 
-  const { user } = useUser();
+  const { user, setUser } = useUser();
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
 
+    setUser(null);
+
     toast.success("Logged Out Successfully");
 
-    navigate("/login");
+    navigate("/staff-login");
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
       <Sidebar />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col">
         <Navbar />
 
@@ -40,37 +40,15 @@ const Dashboard = () => {
             </p>
 
             <p className="text-gray-600">
-              Role : {user?.role}
+              Role : Staff
             </p>
-
-            <button
-              onClick={() => navigate("/staff-management")}
-              className="mt-5 rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
-            >
-              Staff Management
-            </button>
           </div>
 
           <div className="grid grid-cols-4 gap-6">
-            <DashboardCard
-              title="Today's Sales"
-              value="₹15,250"
-            />
-
-            <DashboardCard
-              title="Orders"
-              value="56"
-            />
-
-            <DashboardCard
-              title="Products"
-              value="120"
-            />
-
-            <DashboardCard
-              title="Customers"
-              value="89"
-            />
+            <DashboardCard title="Today's Sales" value="₹0" />
+            <DashboardCard title="Orders" value="0" />
+            <DashboardCard title="Products" value="0" />
+            <DashboardCard title="Customers" value="0" />
           </div>
 
           <button
@@ -85,4 +63,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default StaffDashboard;
