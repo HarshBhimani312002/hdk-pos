@@ -16,6 +16,9 @@ const Dashboard = () => {
 
   const isStaff = user?.role === "staff";
 
+  // Mobile Sidebar
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -49,19 +52,19 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="flex h-screen bg-slate-100">
+    <div className="flex h-screen overflow-hidden bg-slate-100">
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       {/* Main */}
-      <div className="flex flex-1 flex-col overflow-auto">
-        <Navbar />
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-        <div className="space-y-8 p-8">
+        <div className="flex-1 overflow-y-auto space-y-6 p-4 sm:p-6 lg:space-y-8 lg:p-8">
           {/* Hero */}
-          <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-white to-slate-50 p-8 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
+          <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-white to-slate-50 p-5 shadow-sm sm:p-6 lg:p-8">
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-700">
                     Dashboard Overview
@@ -72,17 +75,16 @@ const Dashboard = () => {
                   </span>
                 </div>
 
-                <h2 className="mt-3 text-3xl font-bold text-slate-900">
+                <h2 className="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl">
                   Everything looks good today 🚀
                 </h2>
 
-                <p className="mt-3 max-w-2xl text-slate-500">
+                <p className="mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">
                   Track your daily sales, orders, inventory and customers from
                   one powerful dashboard.
                 </p>
 
                 {/* Hero Stats */}
-
                 <div className="mt-6 flex flex-wrap gap-3">
                   <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2">
                     <p className="text-xs font-medium uppercase text-emerald-600">
@@ -118,8 +120,7 @@ const Dashboard = () => {
                     <p className="text-lg font-bold text-orange-700">89</p>
                   </div>
                 </div>
-
-                <div className="mt-5 flex flex-wrap items-center gap-6 text-sm text-slate-500">
+                <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-slate-500 lg:gap-6">
                   <div>
                     <span className="font-semibold text-slate-700">
                       📅 {formattedDate}
@@ -134,19 +135,20 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="hidden items-center gap-3 lg:flex">
-                <button className="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-semibold text-white shadow-lg transition hover:scale-105">
+              <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto lg:flex lg:items-center">
+                <button className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-semibold text-white shadow-lg transition hover:scale-105 lg:w-auto">
                   + Create Bill
                 </button>
 
                 {!isStaff && (
-                  <button className="rounded-2xl border border-slate-200 bg-white px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-100">
+                  <button className="w-full rounded-2xl border border-slate-200 bg-white px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-100 lg:w-auto">
                     Export Report
                   </button>
                 )}
               </div>
             </div>
           </div>
+
           {/* KPI Cards */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
             <DashboardCard
@@ -188,17 +190,14 @@ const Dashboard = () => {
 
           {/* Dashboard Widgets */}
           <div className="grid grid-cols-12 gap-6">
-            {/* Sales Chart */}
             <div className="col-span-12 xl:col-span-8">
               <SalesChart />
             </div>
 
-            {/* Low Stock */}
             <div className="col-span-12 xl:col-span-4">
               <LowStock />
             </div>
 
-            {/* Recent Orders */}
             <div className="col-span-12">
               <RecentOrders />
             </div>

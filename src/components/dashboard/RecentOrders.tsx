@@ -29,11 +29,11 @@ const orders = [
 
 const RecentOrders = () => {
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">
+          <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
             Recent Orders
           </h2>
 
@@ -42,15 +42,15 @@ const RecentOrders = () => {
           </p>
         </div>
 
-        <button className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium transition hover:bg-slate-100">
+        <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium transition hover:bg-slate-100 sm:w-auto">
           View All
           <ArrowUpRight size={16} />
         </button>
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-2xl border border-slate-100">
-        <table className="w-full">
+      <div className="overflow-x-auto rounded-2xl border border-slate-100">
+        <table className="min-w-[650px] w-full">
           <thead className="bg-slate-50">
             <tr>
               <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">

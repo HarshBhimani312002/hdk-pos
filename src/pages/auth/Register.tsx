@@ -65,12 +65,16 @@ const Register = () => {
     <AuthLayout
       left={<BrandPanel />}
       right={
-        <div className="w-full max-w-md rounded-3xl bg-white p-10 shadow-2xl">
-          <h1 className="text-4xl font-bold text-gray-900">Create Account</h1>
+        <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl sm:p-8 lg:p-10">
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+            Create Account
+          </h1>
 
-          <p className="mt-2 text-gray-500">Create your HDK POS workspace.</p>
+          <p className="mt-2 text-sm text-gray-500 sm:text-base">
+            Create your HDK POS workspace.
+          </p>
 
-          <div className="mt-8 space-y-5">
+          <div className="mt-6 space-y-5 sm:mt-8">
             <AuthInput
               icon={<Store size={18} />}
               type="text"
@@ -92,6 +96,7 @@ const Register = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+
             <GradientButton
               text={loading ? "Creating Account..." : "Create Account"}
               onClick={handleRegister}

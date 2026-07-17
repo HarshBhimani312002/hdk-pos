@@ -29,11 +29,11 @@ const products = [
 
 const LowStock = () => {
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">
+          <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
             Low Stock
           </h2>
 
@@ -42,7 +42,7 @@ const LowStock = () => {
           </p>
         </div>
 
-        <button className="rounded-xl border border-slate-200 p-2 transition hover:bg-slate-100">
+        <button className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-slate-200 transition hover:bg-slate-100">
           <ArrowUpRight size={18} />
         </button>
       </div>
@@ -52,10 +52,10 @@ const LowStock = () => {
         {products.map((product) => (
           <div
             key={product.name}
-            className="flex items-center justify-between rounded-2xl border border-slate-100 p-4 transition hover:bg-slate-50"
+            className="flex flex-col gap-4 rounded-2xl border border-slate-100 p-4 transition hover:bg-slate-50 sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-100">
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-orange-100">
                 <Package
                   size={20}
                   className="text-orange-600"
@@ -73,7 +73,7 @@ const LowStock = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <span
                 className={`rounded-full px-3 py-1 text-xs font-semibold ${product.color}`}
               >

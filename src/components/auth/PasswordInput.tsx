@@ -8,8 +8,7 @@ const PasswordInput = (props: PasswordInputProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="relative">
-
+    <div className="relative w-full">
       <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
         <Lock size={18} />
       </div>
@@ -25,6 +24,8 @@ const PasswordInput = (props: PasswordInputProps) => {
           py-3
           pl-12
           pr-12
+          text-sm
+          sm:text-base
           outline-none
           transition
           focus:border-blue-500
@@ -36,11 +37,10 @@ const PasswordInput = (props: PasswordInputProps) => {
       <button
         type="button"
         onClick={() => setShowPassword(!showPassword)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-gray-600"
       >
         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
       </button>
-
     </div>
   );
 };

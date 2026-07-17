@@ -57,14 +57,16 @@ const Login = () => {
     <AuthLayout
       left={<BrandPanel />}
       right={
-        <div className="w-full max-w-md rounded-3xl bg-white p-10 shadow-2xl">
-          <h1 className="text-4xl font-bold text-gray-900">Welcome back</h1>
+        <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl sm:p-8 lg:p-10">
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+            Welcome back
+          </h1>
 
-          <p className="mt-2 text-gray-500">
+          <p className="mt-2 text-sm text-gray-500 sm:text-base">
             Sign in to your HDK POS workspace to continue.
           </p>
 
-          <div className="mt-8 space-y-5">
+          <div className="mt-6 space-y-5 sm:mt-8">
             <AuthInput
               icon={<User size={18} />}
               type="text"
@@ -79,13 +81,16 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between">
               <label className="flex items-center gap-2 text-gray-600">
                 <input type="checkbox" className="rounded" />
                 Remember me
               </label>
 
-              <button type="button" className="text-blue-600 hover:underline">
+              <button
+                type="button"
+                className="text-left text-blue-600 hover:underline sm:text-right"
+              >
                 Forgot Password?
               </button>
             </div>
@@ -104,11 +109,12 @@ const Login = () => {
                 Create one
               </Link>
             </p>
+
             <Divider />
 
             <Link
               to="/staff-login"
-              className="block w-full rounded-xl border-2 border-green-600 py-3 text-center font-semibold text-green-600 transition hover:bg-green-600 hover:text-white"
+              className="block w-full rounded-xl border-2 border-green-600 py-3 text-center text-sm font-semibold text-green-600 transition hover:bg-green-600 hover:text-white sm:text-base"
             >
               Continue as Staff
             </Link>
