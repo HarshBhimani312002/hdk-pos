@@ -1,11 +1,113 @@
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+
+import { addProduct, updateProduct } from "../../services/productService";
+
+import type { Product, ProductFormData } from "../../types/product";
 
 interface ProductModalProps {
   open: boolean;
   onClose: () => void;
+  onProductAdded: () => void;
+  product: Product | null;
+  isEditing: boolean;
 }
 
-const ProductModal = ({ open, onClose }: ProductModalProps) => {
+const ProductModal = ({
+  open,
+  onClose,
+  onProductAdded,
+  product,
+  isEditing,
+}: ProductModalProps) => {
+  const [loading, setLoading] = useState(false);
+
+  const initialFormData: ProductFormData = {
+    product_name: "",
+    category: "General",
+    selling_price: "",
+    cost_price: "",
+    stock: "",
+    min_stock: "",
+    image_url: "",
+    status: "Active",
+  };
+
+  const [formData, setFormData] = useState<ProductFormData>(initialFormData);
+
+  useEffect(() => {
+    if (isEditing && product) {
+      setFormData({
+        product_name: product.product_name,
+        category: product.category,
+        selling_price: product.selling_price.toString(),
+        cost_price: product.cost_price.toString(),
+        stock: product.stock.toString(),
+        min_stock: product.min_stock.toString(),
+        status: product.status,
+      });
+    } else {
+      setFormData(initialFormData);
+    }
+  }, [product, isEditing]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  const resetForm = () => {
+    setFormData(initialFormData);
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.product_name.trim()) {
+      alert("Product Name is required.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const currentUser = JSON.parse(localStorage.getItem("currentUser")!);
+
+      const productData = {
+        ...formData,
+        selling_price: Number(formData.selling_price),
+        cost_price: Number(formData.cost_price),
+        stock: Number(formData.stock),
+        min_stock: Number(formData.min_stock),
+        store_name: currentUser.store_name,
+      };
+
+      if (isEditing && product) {
+        await updateProduct(product.id, productData);
+      } else {
+        await addProduct(productData);
+      }
+
+      resetForm();
+
+      onClose();
+
+      onProductAdded();
+    } catch (error) {
+      console.error(
+        isEditing ? "Error updating product:" : "Error adding product:",
+        error,
+      );
+
+      alert(isEditing ? "Failed to update product." : "Failed to add product.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!open) return null;
 
   return (
@@ -15,17 +117,23 @@ const ProductModal = ({ open, onClose }: ProductModalProps) => {
         <div className="flex items-start justify-between border-b border-slate-200 bg-white px-6 py-5">
           <div>
             <h2 className="text-2xl font-bold text-slate-900">
-              Add Product
+              {isEditing ? "Edit Product" : "Add Product"}
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              Fill in the details below to create a new product.
+              {isEditing
+                ? "Update the product details below."
+                : "Fill in the details below to create a new product."}
             </p>
           </div>
 
           <button
-            onClick={onClose}
-            className="rounded-xl p-2 transition hover:bg-slate-100"
+            onClick={() => {
+              resetForm();
+              onClose();
+            }}
+            disabled={loading}
+            className="rounded-xl p-2 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <X size={22} />
           </button>
@@ -42,6 +150,9 @@ const ProductModal = ({ open, onClose }: ProductModalProps) => {
 
               <input
                 type="text"
+                name="product_name"
+                value={formData.product_name}
+                onChange={handleChange}
                 placeholder="Enter product name"
                 className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
@@ -57,7 +168,9 @@ const ProductModal = ({ open, onClose }: ProductModalProps) => {
               </label>
 
               <select
-                defaultValue="General"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
                 className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               >
                 <option value="General">General</option>
@@ -83,6 +196,9 @@ const ProductModal = ({ open, onClose }: ProductModalProps) => {
 
               <input
                 type="number"
+                name="selling_price"
+                value={formData.selling_price}
+                onChange={handleChange}
                 placeholder="0.00"
                 className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
@@ -96,6 +212,9 @@ const ProductModal = ({ open, onClose }: ProductModalProps) => {
 
               <input
                 type="number"
+                name="cost_price"
+                value={formData.cost_price}
+                onChange={handleChange}
                 placeholder="0.00"
                 className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
@@ -109,6 +228,9 @@ const ProductModal = ({ open, onClose }: ProductModalProps) => {
 
               <input
                 type="number"
+                name="stock"
+                value={formData.stock}
+                onChange={handleChange}
                 placeholder="0"
                 className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
@@ -122,7 +244,10 @@ const ProductModal = ({ open, onClose }: ProductModalProps) => {
 
               <input
                 type="number"
-                placeholder="5"
+                name="min_stock"
+                value={formData.min_stock}
+                onChange={handleChange}
+                placeholder=""
                 className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
@@ -134,7 +259,9 @@ const ProductModal = ({ open, onClose }: ProductModalProps) => {
               </label>
 
               <select
-                defaultValue="Active"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
                 className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               >
                 <option value="Active">Active</option>
@@ -143,18 +270,31 @@ const ProductModal = ({ open, onClose }: ProductModalProps) => {
             </div>
           </div>
         </div>
-
         {/* Footer */}
         <div className="flex flex-col-reverse gap-3 border-t border-slate-200 bg-white px-6 py-5 sm:flex-row sm:justify-end">
           <button
-            onClick={onClose}
-            className="rounded-xl border border-slate-300 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-100"
+            onClick={() => {
+              resetForm();
+              onClose();
+            }}
+            disabled={loading}
+            className="rounded-xl border border-slate-300 px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel
           </button>
 
-          <button className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-semibold text-white shadow-lg transition hover:opacity-90">
-            Save Product
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-semibold text-white shadow-lg transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading
+              ? isEditing
+                ? "Updating..."
+                : "Saving..."
+              : isEditing
+                ? "Update Product"
+                : "Save Product"}
           </button>
         </div>
       </div>

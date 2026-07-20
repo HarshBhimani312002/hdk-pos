@@ -1,41 +1,45 @@
 import { Edit, Trash2 } from "lucide-react";
 import { useUser } from "../../context/UserContext";
+import type { Product } from "../../types/product";
 
-const dummyProducts = [
-  {
-    id: 1001,
-    name: "iPhone 16 Pro",
-    price: 99999,
-    stock: 15,
-    status: "Active",
-  },
-  {
-    id: 1002,
-    name: "Samsung S25 Ultra",
-    price: 89999,
-    stock: 10,
-    status: "Active",
-  },
-  {
-    id: 1003,
-    name: "AirPods Pro",
-    price: 24999,
-    stock: 6,
-    status: "Low Stock",
-  },
-  {
-    id: 1004,
-    name: "Dell XPS 15",
-    price: 165000,
-    stock: 3,
-    status: "Low Stock",
-  },
-];
+interface ProductTableProps {
+  products: Product[];
+  loading: boolean;
+  onEdit: (product: Product) => void;
+  onDelete: (product: Product) => void;
+}
 
-const ProductTable = () => {
+const ProductTable = ({
+  products,
+  loading,
+  onEdit,
+  onDelete,
+}: ProductTableProps) => {
   const { user } = useUser();
 
   const isOwner = user?.role === "owner";
+
+  if (loading) {
+    return (
+      <div className="rounded-3xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+        <p className="text-slate-500">Loading products...</p>
+      </div>
+    );
+  }
+
+ if (products.length === 0) {
+  return (
+    <div className="rounded-3xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+      <p className="text-lg font-semibold text-slate-700">
+        No products match your search.
+      </p>
+
+      <p className="mt-2 text-slate-500">
+        Try searching with a different product name or Product ID.
+      </p>
+    </div>
+  );
+}
 
   return (
     <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
@@ -68,23 +72,23 @@ const ProductTable = () => {
           </thead>
 
           <tbody>
-            {dummyProducts.map((product) => (
+            {products.map((product) => (
               <tr
                 key={product.id}
                 className="border-t border-slate-200 transition hover:bg-slate-50"
               >
                 <td className="px-6 py-4">
                   <div className="font-semibold text-slate-800">
-                    {product.name}
+                    {product.product_name}
                   </div>
 
                   <div className="mt-1 text-xs text-slate-500">
-                    Product ID: #{product.id}
+                    Product ID: #{product.id.slice(0, 8)}
                   </div>
                 </td>
 
                 <td className="px-6 py-4 font-semibold text-slate-800">
-                  ₹{product.price.toLocaleString()}
+                  ₹{Number(product.selling_price).toLocaleString()}
                 </td>
 
                 <td className="px-6 py-4 text-slate-700">
@@ -106,11 +110,17 @@ const ProductTable = () => {
                 {isOwner && (
                   <td className="px-6 py-4">
                     <div className="flex justify-center gap-3">
-                      <button className="rounded-lg bg-blue-100 p-2 text-blue-600 transition hover:bg-blue-200">
+                      <button
+                        onClick={() => onEdit(product)}
+                        className="rounded-lg bg-blue-100 p-2 text-blue-600 transition hover:bg-blue-200"
+                      >
                         <Edit size={18} />
                       </button>
 
-                      <button className="rounded-lg bg-red-100 p-2 text-red-600 transition hover:bg-red-200">
+                      <button
+                        onClick={() => onDelete(product)}
+                        className="rounded-lg bg-red-100 p-2 text-red-600 transition hover:bg-red-200"
+                      >
                         <Trash2 size={18} />
                       </button>
                     </div>
