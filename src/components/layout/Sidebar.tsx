@@ -2,6 +2,7 @@ import {
   LayoutDashboard,
   Receipt,
   Boxes,
+  Package,
   Settings,
   Users,
   UsersRound,
@@ -107,6 +108,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           </button>
 
           <button
+            onClick={() => navigateTo("/products")}
+            className={menuClass("/products")}
+          >
+            <Package size={19} />
+            <span>Products</span>
+          </button>
+
+          <button
             onClick={() => navigateTo("/inventory")}
             className={menuClass("/inventory")}
           >
@@ -121,6 +130,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             <UsersRound size={19} />
             <span>Customers</span>
           </button>
+
           {/* OWNER ONLY */}
           {user?.role === "owner" && (
             <>

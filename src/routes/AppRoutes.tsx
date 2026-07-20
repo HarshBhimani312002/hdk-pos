@@ -5,6 +5,7 @@ import ProtectedRoute from "../auth/ProtectedRoute";
 import Dashboard from "../pages/dashboard/Dashboard";
 import StaffManagement from "../pages/dashboard/StaffManagement";
 import Billing from "../pages/billing/Billing";
+import Products from "../pages/products/Products";
 
 import Login from "../pages/auth/Login";
 import StaffLogin from "../pages/auth/StaffLogin";
@@ -36,6 +37,16 @@ function AppRoutes() {
           }
         />
 
+        {/* Products */}
+        <Route
+          path="/products"
+          element={
+            <ProtectedRoute>
+              <Products />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Staff Management (Owner Only - check inside component if needed) */}
         <Route
           path="/staff-management"
@@ -58,7 +69,11 @@ function AppRoutes() {
         {/* Redirect root to dashboard */}
         <Route
           path="/"
-          element={<ProtectedRoute><Dashboard /></ProtectedRoute>}
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
         />
 
         {/* 404 */}
