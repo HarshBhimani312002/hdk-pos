@@ -4,10 +4,10 @@ import ProtectedRoute from "../auth/ProtectedRoute";
 import MainLayout from "../layouts/MainLayout";
 
 import Dashboard from "../pages/dashboard/Dashboard";
-import StaffManagement from "../pages/dashboard/StaffManagement";
 import Billing from "../pages/billing/Billing";
 import Products from "../pages/products/Products";
 import InventoryPage from "../pages/inventory/InventoryPage";
+import StaffPage from "../pages/staff/StaffPage";
 
 import Login from "../pages/auth/Login";
 import StaffLogin from "../pages/auth/StaffLogin";
@@ -24,7 +24,7 @@ function AppRoutes() {
         <Route path="/staff-login" element={<StaffLogin />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Protected Routes with Main Layout */}
+        {/* Protected Routes */}
         <Route
           element={
             <ProtectedRoute>
@@ -39,7 +39,7 @@ function AppRoutes() {
           <Route path="/inventory" element={<InventoryPage />} />
           <Route
             path="/staff-management"
-            element={<StaffManagement />}
+            element={<StaffPage />}
           />
         </Route>
 

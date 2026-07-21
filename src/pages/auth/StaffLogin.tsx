@@ -2,16 +2,16 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
 import toast from "react-hot-toast";
+
 import Divider from "../../components/auth/Divider";
-
-import { supabase } from "../../services/supabase";
-import { useUser } from "../../context/UserContext";
-
 import AuthLayout from "../../components/auth/AuthLayout";
 import BrandPanel from "../../components/auth/BrandPanel";
 import AuthInput from "../../components/auth/AuthInput";
 import PasswordInput from "../../components/auth/PasswordInput";
 import GradientButton from "../../components/auth/GradientButton";
+
+import { supabase } from "../../services/supabase";
+import { useUser } from "../../context/UserContext";
 
 const StaffLogin = () => {
   const [username, setUsername] = useState("");
@@ -22,35 +22,46 @@ const StaffLogin = () => {
   const { setUser } = useUser();
 
   const handleLogin = async () => {
-    if (!username || !password) {
+    if (!username.trim() || !password.trim()) {
       toast.error("Please enter username and password");
       return;
     }
 
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const { data: user, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("username", username)
-      .eq("password", password)
-      .eq("role", "staff")
-      .maybeSingle();
+      const { data: user, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("username", username.trim())
+        .eq("password", password)
+        .eq("role", "staff")
+        .maybeSingle();
 
-    if (error || !user) {
-      toast.error("Invalid Username or Password");
+      if (error || !user) {
+        toast.error("Invalid username or password.");
+        return;
+      }
+
+      // Prevent inactive staff from logging in
+      if (user.status === "Inactive") {
+        toast.error("Your account is inactive. Please contact the store owner.");
+        return;
+      }
+
+      localStorage.setItem("currentUser", JSON.stringify(user));
+
+      setUser(user);
+
+      toast.success(`Welcome ${user.username}!`);
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    localStorage.setItem("currentUser", JSON.stringify(user));
-    setUser(user);
-
-    toast.success(`Welcome ${user.username}`);
-
-    setLoading(false);
-
-    navigate("/dashboard")
   };
 
   return (
@@ -58,9 +69,13 @@ const StaffLogin = () => {
       left={<BrandPanel />}
       right={
         <div className="w-full max-w-md rounded-3xl bg-white p-10 shadow-2xl">
-          <h1 className="text-4xl font-bold text-gray-900">Staff Login</h1>
+          <h1 className="text-4xl font-bold text-gray-900">
+            Staff Login
+          </h1>
 
-          <p className="mt-2 text-gray-500">Login with your staff account.</p>
+          <p className="mt-2 text-gray-500">
+            Login with your staff account.
+          </p>
 
           <div className="mt-8 space-y-5">
             <AuthInput
@@ -81,6 +96,7 @@ const StaffLogin = () => {
               text={loading ? "Signing In..." : "Sign In"}
               onClick={handleLogin}
             />
+
             <Divider />
 
             <Link
