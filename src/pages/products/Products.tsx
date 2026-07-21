@@ -1,20 +1,19 @@
 import { useEffect, useState } from "react";
 import { Package, Plus, Search } from "lucide-react";
-
-import MainLayout from "../../layouts/MainLayout";
 import { useUser } from "../../context/UserContext";
-
+import toast from "react-hot-toast";
 import ProductTable from "../../components/products/ProductTable";
 import ProductModal from "../../components/products/ProductModal";
 import DeleteProductModal from "../../components/products/DeleteProductModal";
 
 import type { Product } from "../../types/product";
 import { getProducts, deleteProduct } from "../../services/productService";
+import { getPermissions } from "../../utils/permissions";
 
 const Products = () => {
   const { user } = useUser();
 
-  const isOwner = user?.role === "owner";
+  const permissions = getPermissions(user?.role ?? "");
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -45,15 +44,19 @@ const Products = () => {
   };
 
   const handleEdit = (product: Product) => {
-    setSelectedProduct(product);
-    setIsEditing(true);
-    setModalOpen(true);
-  };
+  if (!permissions.canManageProducts) return;
 
-  const handleDeleteClick = (product: Product) => {
-    setProductToDelete(product);
-    setDeleteModalOpen(true);
-  };
+  setSelectedProduct(product);
+  setIsEditing(true);
+  setModalOpen(true);
+};
+
+ const handleDeleteClick = (product: Product) => {
+  if (!permissions.canManageProducts) return;
+
+  setProductToDelete(product);
+  setDeleteModalOpen(true);
+};
 
   const handleDeleteConfirm = async () => {
     if (!productToDelete) return;
@@ -67,7 +70,8 @@ const Products = () => {
       setProductToDelete(null);
     } catch (error) {
       console.error("Error deleting product:", error);
-      alert("Failed to delete product.");
+      toast.error("Failed to delete product.");
+      toast.success("Product deleted successfully.");
     }
   };
 
@@ -99,7 +103,7 @@ const Products = () => {
   console.log("Filtered Products:", filteredProducts);
 
   return (
-    <MainLayout>
+    <>
       <div className="space-y-6 lg:space-y-8">
         {/* Header */}
         <div className="flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -119,7 +123,7 @@ const Products = () => {
               </p>
             </div>
 
-            {isOwner && (
+{permissions.canManageProducts &&  (
               <button
                 onClick={() => {
                   setSelectedProduct(null);
@@ -190,7 +194,7 @@ const Products = () => {
           onConfirm={handleDeleteConfirm}
         />
       </div>
-    </MainLayout>
+    </>
   );
 };
 

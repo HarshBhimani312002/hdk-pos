@@ -1,11 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import ProtectedRoute from "../auth/ProtectedRoute";
+import MainLayout from "../layouts/MainLayout";
 
 import Dashboard from "../pages/dashboard/Dashboard";
 import StaffManagement from "../pages/dashboard/StaffManagement";
 import Billing from "../pages/billing/Billing";
 import Products from "../pages/products/Products";
+import InventoryPage from "../pages/inventory/InventoryPage";
 
 import Login from "../pages/auth/Login";
 import StaffLogin from "../pages/auth/StaffLogin";
@@ -17,64 +19,29 @@ function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Dashboard (Owner + Staff) */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Billing */}
-        <Route
-          path="/billing"
-          element={
-            <ProtectedRoute>
-              <Billing />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Products */}
-        <Route
-          path="/products"
-          element={
-            <ProtectedRoute>
-              <Products />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Staff Management (Owner Only - check inside component if needed) */}
-        <Route
-          path="/staff-management"
-          element={
-            <ProtectedRoute>
-              <StaffManagement />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Owner Login */}
+        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-
-        {/* Staff Login */}
         <Route path="/staff-login" element={<StaffLogin />} />
-
-        {/* Owner Register */}
         <Route path="/register" element={<Register />} />
 
-        {/* Redirect root to dashboard */}
+        {/* Protected Routes with Main Layout */}
         <Route
-          path="/"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <MainLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/billing" element={<Billing />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/inventory" element={<InventoryPage />} />
+          <Route
+            path="/staff-management"
+            element={<StaffManagement />}
+          />
+        </Route>
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />

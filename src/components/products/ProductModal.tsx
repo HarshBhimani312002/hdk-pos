@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-
+import { getPermissions } from "../../utils/permissions";
+import toast from "react-hot-toast";
 import { addProduct, updateProduct } from "../../services/productService";
 
 import type { Product, ProductFormData } from "../../types/product";
@@ -21,6 +22,9 @@ const ProductModal = ({
   isEditing,
 }: ProductModalProps) => {
   const [loading, setLoading] = useState(false);
+  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+
+  const permissions = getPermissions(currentUser.role);
 
   const initialFormData: ProductFormData = {
     product_name: "",
@@ -66,16 +70,17 @@ const ProductModal = ({
   };
 
   const handleSubmit = async () => {
+    if (!permissions.canManageProducts) {
+      toast.error("Only the owner can manage products.");
+      return;
+    }
     if (!formData.product_name.trim()) {
-      alert("Product Name is required.");
+      toast.error("Product Name is required.");
       return;
     }
 
     try {
       setLoading(true);
-
-      const currentUser = JSON.parse(localStorage.getItem("currentUser")!);
-
       const productData = {
         ...formData,
         selling_price: Number(formData.selling_price),
@@ -96,17 +101,29 @@ const ProductModal = ({
       onClose();
 
       onProductAdded();
+      toast.success(
+        isEditing
+          ? "Product updated successfully."
+          : "Product added successfully.",
+      );
     } catch (error) {
       console.error(
         isEditing ? "Error updating product:" : "Error adding product:",
         error,
       );
 
-      alert(isEditing ? "Failed to update product." : "Failed to add product.");
+      toast.error(
+  isEditing
+    ? "Failed to update product."
+    : "Failed to add product."
+);
     } finally {
       setLoading(false);
     }
   };
+  if (!permissions.canManageProducts) {
+    return null;
+  }
 
   if (!open) return null;
 

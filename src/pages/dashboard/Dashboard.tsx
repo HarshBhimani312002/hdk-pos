@@ -2,10 +2,6 @@ import { useEffect, useState } from "react";
 import { DollarSign, ShoppingCart, Package, Users } from "lucide-react";
 
 import { useUser } from "../../context/UserContext";
-
-import Sidebar from "../../components/layout/Sidebar";
-import Navbar from "../../components/layout/Navbar";
-
 import DashboardCard from "../../components/dashboard/DashboardCard";
 import SalesChart from "../../components/dashboard/SalesChart";
 import RecentOrders from "../../components/dashboard/RecentOrders";
@@ -17,8 +13,6 @@ const Dashboard = () => {
   const isStaff = user?.role === "staff";
 
   // Mobile Sidebar
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -52,15 +46,10 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-100">
-      {/* Sidebar */}
-      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
+    <>
       {/* Main */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-        <div className="flex-1 overflow-y-auto space-y-6 p-4 sm:p-6 lg:space-y-8 lg:p-8">
+        <div className="space-y-6 lg:space-y-8">
           {/* Hero */}
           <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-white to-slate-50 p-5 shadow-sm sm:p-6 lg:p-8">
             <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
@@ -203,8 +192,8 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    
+    </>
   );
 };
 

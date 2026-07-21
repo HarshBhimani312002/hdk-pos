@@ -1,6 +1,7 @@
 import { Edit, Trash2 } from "lucide-react";
-import { useUser } from "../../context/UserContext";
+import { getPermissions } from "../../utils/permissions";
 import type { Product } from "../../types/product";
+import { useUser } from "../../context/UserContext";
 
 interface ProductTableProps {
   products: Product[];
@@ -17,7 +18,7 @@ const ProductTable = ({
 }: ProductTableProps) => {
   const { user } = useUser();
 
-  const isOwner = user?.role === "owner";
+  const permissions = getPermissions(user?.role ?? "");
 
   if (loading) {
     return (
@@ -63,11 +64,11 @@ const ProductTable = ({
                 Status
               </th>
 
-              {isOwner && (
-                <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">
-                  Actions
-                </th>
-              )}
+             {permissions.canManageProducts && (
+  <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">
+    Actions
+  </th>
+)}
             </tr>
           </thead>
 
@@ -107,7 +108,7 @@ const ProductTable = ({
                   </span>
                 </td>
 
-                {isOwner && (
+                {permissions.canManageProducts && (
                   <td className="px-6 py-4">
                     <div className="flex justify-center gap-3">
                       <button
