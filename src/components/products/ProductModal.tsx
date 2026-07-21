@@ -31,7 +31,7 @@ const ProductModal = ({
     category: "General",
     selling_price: "",
     cost_price: "",
-    stock: "",
+    stock: "0",
     min_stock: "",
     image_url: "",
     status: "Active",
@@ -85,7 +85,7 @@ const ProductModal = ({
         ...formData,
         selling_price: Number(formData.selling_price),
         cost_price: Number(formData.cost_price),
-        stock: Number(formData.stock),
+        stock: product?.stock ?? 0,
         min_stock: Number(formData.min_stock),
         store_name: currentUser.store_name,
       };
@@ -113,10 +113,8 @@ const ProductModal = ({
       );
 
       toast.error(
-  isEditing
-    ? "Failed to update product."
-    : "Failed to add product."
-);
+        isEditing ? "Failed to update product." : "Failed to add product.",
+      );
     } finally {
       setLoading(false);
     }
@@ -233,22 +231,6 @@ const ProductModal = ({
                 value={formData.cost_price}
                 onChange={handleChange}
                 placeholder="0.00"
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
-            </div>
-
-            {/* Stock */}
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Stock
-              </label>
-
-              <input
-                type="number"
-                name="stock"
-                value={formData.stock}
-                onChange={handleChange}
-                placeholder="0"
                 className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>

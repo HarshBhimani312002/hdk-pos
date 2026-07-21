@@ -30,7 +30,10 @@ export const addProduct = async (
 ): Promise<Product> => {
   const { data, error } = await supabase
     .from("products")
-    .insert(product)
+    .insert({
+      ...product,
+      stock: 0,
+    })
     .select()
     .single();
 
