@@ -5,7 +5,6 @@ import type {
 } from "../types/product";
 
 // Get all products
-// Get all products
 export const getProducts = async (): Promise<Product[]> => {
   const currentUser = JSON.parse(
     localStorage.getItem("currentUser")!
@@ -16,6 +15,34 @@ export const getProducts = async (): Promise<Product[]> => {
     .select("*")
     .eq("store_name", currentUser.store_name)
     .order("created_at", { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  return data as Product[];
+};
+
+// Get available products for billing
+export const getAvailableProducts = async (
+  search: string = ""
+): Promise<Product[]> => {
+  const currentUser = JSON.parse(
+    localStorage.getItem("currentUser")!
+  );
+
+  let query = supabase
+    .from("products")
+    .select("*")
+    .eq("store_name", currentUser.store_name)
+    .gt("stock", 0)
+    .order("product_name");
+
+  if (search.trim()) {
+    query = query.ilike("product_name", `%${search}%`);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     throw error;
@@ -64,7 +91,9 @@ export const updateProduct = async (
 };
 
 // Delete product
-export const deleteProduct = async (id: string): Promise<void> => {
+export const deleteProduct = async (
+  id: string
+): Promise<void> => {
   const { error } = await supabase
     .from("products")
     .delete()

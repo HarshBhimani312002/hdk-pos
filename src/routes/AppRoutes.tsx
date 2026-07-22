@@ -8,6 +8,8 @@ import Billing from "../pages/billing/Billing";
 import Products from "../pages/products/Products";
 import InventoryPage from "../pages/inventory/InventoryPage";
 import StaffPage from "../pages/staff/StaffPage";
+import SalesHistory from "../pages/sales/SalesHistory";
+import InvoiceDetails from "../pages/sales/InvoiceDetails";
 
 import Login from "../pages/auth/Login";
 import StaffLogin from "../pages/auth/StaffLogin";
@@ -37,9 +39,22 @@ function AppRoutes() {
           <Route path="/billing" element={<Billing />} />
           <Route path="/products" element={<Products />} />
           <Route path="/inventory" element={<InventoryPage />} />
+
           <Route
             path="/staff-management"
             element={<StaffPage />}
+          />
+
+          {/* Sales History */}
+          <Route
+            path="/sales"
+            element={<SalesHistory />}
+          />
+
+          {/* Invoice Details */}
+          <Route
+            path="/sales/:id"
+            element={<InvoiceDetails />}
           />
         </Route>
 
