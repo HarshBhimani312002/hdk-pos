@@ -5,39 +5,33 @@ import {
   Package,
   Settings,
   Users,
-  UsersRound,
   Store,
   X,
   History,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
+import { getPermissions } from "../../utils/permissions";
 
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Sidebar = ({
-  sidebarOpen,
-  setSidebarOpen,
-}: SidebarProps) => {
+const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useUser();
+  const permissions = getPermissions(user?.role || "");
 
   const navigateTo = (path: string) => {
     navigate(path);
     setSidebarOpen(false);
   };
 
-  const menuClass = (
-    path: string,
-    matchSubRoutes = false,
-  ) => {
+  const menuClass = (path: string, matchSubRoutes = false) => {
     const isActive = matchSubRoutes
-      ? location.pathname === path ||
-        location.pathname.startsWith(`${path}/`)
+      ? location.pathname === path || location.pathname.startsWith(`${path}/`)
       : location.pathname === path;
 
     return `group flex w-full items-center gap-4 rounded-2xl px-4 py-3 text-[15px] font-semibold transition-all duration-300 ${
@@ -60,9 +54,7 @@ const Sidebar = ({
       {/* Sidebar */}
       <aside
         className={`fixed left-0 top-0 z-50 flex h-screen w-72 flex-col border-r border-slate-200 bg-white shadow-xl transition-transform duration-300 ${
-          sidebarOpen
-            ? "translate-x-0"
-            : "-translate-x-full"
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:shadow-sm`}
       >
         {/* Logo */}
@@ -70,10 +62,7 @@ const Sidebar = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 shadow-md">
-                <Store
-                  className="text-white"
-                  size={24}
-                />
+                <Store className="text-white" size={24} />
               </div>
 
               <div>
@@ -81,9 +70,7 @@ const Sidebar = ({
                   HDK POS
                 </h1>
 
-                <p className="text-sm text-slate-500">
-                  Retail Management
-                </p>
+                <p className="text-sm text-slate-500">Retail Management</p>
               </div>
             </div>
 
@@ -104,9 +91,7 @@ const Sidebar = ({
           </p>
 
           <button
-            onClick={() =>
-              navigateTo("/dashboard")
-            }
+            onClick={() => navigateTo("/dashboard")}
             className={menuClass("/dashboard")}
           >
             <LayoutDashboard size={19} />
@@ -121,9 +106,7 @@ const Sidebar = ({
           </p>
 
           <button
-            onClick={() =>
-              navigateTo("/billing")
-            }
+            onClick={() => navigateTo("/billing")}
             className={menuClass("/billing")}
           >
             <Receipt size={19} />
@@ -131,76 +114,68 @@ const Sidebar = ({
           </button>
 
           <button
-            onClick={() =>
-              navigateTo("/sales")
-            }
+            onClick={() => navigateTo("/sales")}
             className={menuClass("/sales", true)}
           >
             <History size={19} />
             <span>Sales History</span>
           </button>
 
-          {user?.role === "owner" && (
-            <>
+          <>
+            {permissions.canViewProducts && (
               <button
-                onClick={() =>
-                  navigateTo("/products")
-                }
+                onClick={() => navigateTo("/products")}
                 className={menuClass("/products")}
               >
                 <Package size={19} />
                 <span>Products</span>
               </button>
+            )}
 
+            {permissions.canViewInventory && (
               <button
-                onClick={() =>
-                  navigateTo("/inventory")
-                }
+                onClick={() => navigateTo("/inventory")}
                 className={menuClass("/inventory")}
               >
                 <Boxes size={19} />
                 <span>Inventory</span>
               </button>
+            )}
 
-              <button
-                onClick={() =>
-                  navigateTo("/customers")
-                }
-                className={menuClass("/customers")}
-              >
-                <UsersRound size={19} />
-                <span>Customers</span>
-              </button>
+            {/* <button
+              onClick={() => navigateTo("/customers")}
+              className={menuClass("/customers")}
+            >
+              <UsersRound size={19} />
+              <span>Customers</span>
+            </button> */}
 
-              <div className="my-4 border-t border-slate-200"></div>
+            {permissions.canManageStaff && (
+              <>
+                <div className="my-4 border-t border-slate-200"></div>
 
-              <p className="mb-2 px-4 text-xs font-bold uppercase tracking-widest text-slate-400">
-                Administration
-              </p>
+                <p className="mb-2 px-4 text-xs font-bold uppercase tracking-widest text-slate-400">
+                  Administration
+                </p>
 
-              <button
-                onClick={() =>
-                  navigateTo("/staff-management")
-                }
-                className={menuClass(
-                  "/staff-management",
-                )}
-              >
-                <Users size={19} />
-                <span>Staff Management</span>
-              </button>
+                <button
+                  onClick={() => navigateTo("/staff-management")}
+                  className={menuClass("/staff-management")}
+                >
+                  <Users size={19} />
+                  <span>Staff Management</span>
+                </button>
 
-              <button
-                onClick={() =>
-                  navigateTo("/settings")
-                }
-                className={menuClass("/settings")}
-              >
-                <Settings size={19} />
-                <span>Settings</span>
-              </button>
-            </>
-          )}
+                <button
+                  onClick={() => navigateTo("/settings")}
+                  className={menuClass("/settings")}
+                >
+                  <Settings size={19} />
+                  <span>Settings</span>
+                </button>
+              </>
+            )}
+          </>
         </nav>
       </aside>
     </>

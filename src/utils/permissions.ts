@@ -1,10 +1,12 @@
 export interface UserPermissions {
   // Inventory
+  canViewInventory: boolean;
   canStockIn: boolean;
   canStockOut: boolean;
   canExportInventory: boolean;
 
   // Products
+  canViewProducts: boolean;
   canManageProducts: boolean;
 
   // Billing
@@ -12,7 +14,11 @@ export interface UserPermissions {
   canCancelBill: boolean;
 
   // Customers
+  canViewCustomers: boolean;
   canManageCustomers: boolean;
+
+  // Sales History
+  canDeleteMonthlySales: boolean;
 
   // Reports
   canViewReports: boolean;
@@ -29,11 +35,13 @@ export const getPermissions = (role: string): UserPermissions => {
 
   return {
     // Inventory
+    canViewInventory: true,
     canStockIn: isOwner,
     canStockOut: true,
     canExportInventory: isOwner,
 
     // Products
+    canViewProducts: true,
     canManageProducts: isOwner,
 
     // Billing
@@ -41,7 +49,11 @@ export const getPermissions = (role: string): UserPermissions => {
     canCancelBill: isOwner,
 
     // Customers
+    canViewCustomers: true,
     canManageCustomers: isOwner,
+
+    // Sales History
+    canDeleteMonthlySales: isOwner,
 
     // Reports
     canViewReports: isOwner,

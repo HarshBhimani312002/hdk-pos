@@ -3,9 +3,10 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 
-import { getSales } from "../../services/salesService";
+import { getSales, deleteMonthlySales } from "../../services/salesService";
 import { getInvoice, getInvoiceItems } from "../../services/invoiceService";
 import { downloadInvoicePDF } from "../../services/pdfService";
+import { getPermissions } from "../../utils/permissions";
 
 import type { Sale } from "../../types/sale";
 
@@ -18,11 +19,16 @@ const SalesHistory = () => {
   const [selectedMonth, setSelectedMonth] = useState("all");
 
   const [selectedYear, setSelectedYear] = useState("all");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const ITEMS_PER_PAGE = 2;
+  const ITEMS_PER_PAGE = 5;
 
   const navigate = useNavigate();
+  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+
+  const permissions = getPermissions(currentUser.role);
 
   useEffect(() => {
     loadSales();
@@ -58,6 +64,18 @@ const SalesHistory = () => {
       toast.error("Failed to download invoice.");
     } finally {
       setDownloadingId(null);
+    }
+  };
+  const handleDeleteMonthlySales = async () => {
+    try {
+      await deleteMonthlySales(Number(selectedMonth), Number(selectedYear));
+
+      toast.success("Monthly sales deleted successfully.");
+
+      loadSales();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete monthly sales.");
     }
   };
 
@@ -192,6 +210,15 @@ const SalesHistory = () => {
               </option>
             ))}
           </select>
+          {permissions.canDeleteMonthlySales && (
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              disabled={selectedMonth === "all" || selectedYear === "all"}
+              className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Delete Monthly Records
+            </button>
+          )}
         </div>
       </div>
       <div className="overflow-hidden rounded-xl bg-white shadow">
@@ -330,6 +357,65 @@ const SalesHistory = () => {
           </div>
         )}
       </div>
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+            <h2 className="text-xl font-bold text-red-600">
+              Delete Monthly Records
+            </h2>
+
+            <p className="mt-3 text-sm text-gray-600">
+              This action will permanently delete all invoices for:
+            </p>
+
+            <div className="mt-4 rounded-lg bg-gray-100 p-3">
+              <p>
+                <strong>Month:</strong> {months[Number(selectedMonth)]}
+              </p>
+
+              <p>
+                <strong>Year:</strong> {selectedYear}
+              </p>
+            </div>
+
+            <p className="mt-4 text-sm font-medium">
+              Type <span className="text-red-600">DELETE</span> to continue.
+            </p>
+
+            <input
+              type="text"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              className="mt-2 w-full rounded-lg border px-3 py-2 outline-none focus:border-red-500"
+              placeholder="Type DELETE"
+            />
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setConfirmText("");
+                }}
+                className="rounded-lg border px-4 py-2"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={async () => {
+                  await handleDeleteMonthlySales();
+                  setShowDeleteModal(false);
+                  setConfirmText("");
+                }}
+                disabled={confirmText !== "DELETE"}
+                className="rounded-lg bg-red-600 px-4 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
